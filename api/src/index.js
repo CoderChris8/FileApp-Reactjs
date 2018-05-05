@@ -13,9 +13,10 @@ import AppRouter from './router';
 
 // File storage config
 
+const storageDir = path.join(__dirname, '..', 'storage');
 const storageConfig = multer.diskStorage({
 	destination:  (req, file, cb) => {
-	  cb(null, '/tmp/my-uploads')
+	  cb(null, storageDir)
 	},
 	filename:  (req, file, cb) => {
 	  cb(null, Date.now() + path.extname(file.originalname))
@@ -41,6 +42,8 @@ app.use(bodyParser.json({
 }));
 
 app.set('root', __dirname);
+app.set('storageDir', storageDir);
+app.set('upload', upload);
 
 // Connect to the database.
 

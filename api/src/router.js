@@ -23,14 +23,15 @@ class AppRouter {
         
         });
 
-        app.post('/api/upload', (req, res, next) => {
+        const uploadDir = app.get('storageDir');
+        const upload = app.get('upload');
 
-            return res.json({
+        app.post('/api/upload', upload.array('files'),(req, res, next) => {
 
-                upload:' Works',
-            })
+            console.log('Received file uploaded', req.files);
+            });
 
-        });
+    
     }
 
 }
