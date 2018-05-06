@@ -1,5 +1,6 @@
 import { CLIENT_RENEG_LIMIT } from "tls";
 
+import path from 'path' // added 37.57
 import {version} from '../package.json'
 
 class AppRouter {
@@ -9,10 +10,11 @@ class AppRouter {
         this.app = app;
         this.setupRouters();
     }
-
     setupRouters(){
 
         const app = this.app;
+        const uploadDir = app.get('storageDir'); //<-- Modified and moved (Reference error if commented out)
+        const upload = app.get('upload'); //<-- Modified and moved
 
         // root routing
         app.get('/', (req, res, next) => {
@@ -23,19 +25,44 @@ class AppRouter {
         
         });
 
-        const uploadDir = app.get('storageDir');
-        const upload = app.get('upload');
-
+        
+        // Upload routing
         app.post('/api/upload', upload.array('files'),(req, res, next) => {
-
-            console.log('Received file uploaded', req.files);
-
-            const files = req.files;
+            const files = req.files; // console.log('Received file uploaded', req.files); <-- Commented out
             return res.json({
                 files:files,
             })
         });
     
+        // Download routing <-- added 35.37
+
+        app.get('/api/download/:name', (req, res, next) => { // <-- added 35.37 (the token -> name)
+
+            const fileName = req.params.name; // <-- added 36.48 
+            const filePath = path.join(uploadDir, fileName); // added 38.24
+
+            return res.download(filePath, fileName, (err) => { // added. 39.21
+
+                if(err){
+
+                    return res.status(404).json({
+
+                        error: {
+                            message: "File not found"
+                        }
+                    }); 
+                }else{
+
+                    console.log("File is downloaded.");
+                }
+
+            });
+        
+                
+
+        }); 
+
+
     }
 
 }
