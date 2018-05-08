@@ -2,14 +2,16 @@ import { CLIENT_RENEG_LIMIT } from "tls";
 
 import path from 'path' // added 37.57
 import {version} from '../package.json'
+import _ from 'lodash'
+import File from './models/file' // added 53.45
 
 class AppRouter {
 
     constructor(app){ // This is coming from the index.js file.
-
         this.app = app;
         this.setupRouters();
     }
+
     setupRouters(){
 
         const app = this.app;
@@ -29,8 +31,16 @@ class AppRouter {
         // Upload routing
         app.post('/api/upload', upload.array('files'),(req, res, next) => {
             const files = req.files; // console.log('Received file uploaded', req.files); <-- Commented out
+
+            let fileModels = [];
+            
+            _.each(files, (fileObject) => { // added 52.46
+                const newFile = new File(app).initWithObject(fileObject).toJson();
+                fileModels.push(newFile);
+            });
+
             return res.json({
-                files:files,
+                files: fileModels,
             })
         });
     

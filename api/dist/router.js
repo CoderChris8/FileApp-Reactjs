@@ -15,16 +15,25 @@ var _path2 = _interopRequireDefault(_path);
 
 var _package = require('../package.json');
 
+var _lodash = require('lodash');
+
+var _lodash2 = _interopRequireDefault(_lodash);
+
+var _file = require('./models/file');
+
+var _file2 = _interopRequireDefault(_file);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+// added 53.45
 
 var AppRouter = function () {
     function AppRouter(app) {
         _classCallCheck(this, AppRouter);
 
         // This is coming from the index.js file.
-
         this.app = app;
         this.setupRouters();
     }
@@ -34,7 +43,7 @@ var AppRouter = function () {
         value: function setupRouters() {
 
             var app = this.app;
-            var uploadDir = app.get('storageDir'); //<-- Modified and moved
+            var uploadDir = app.get('storageDir'); //<-- Modified and moved (Reference error if commented out)
             var upload = app.get('upload'); //<-- Modified and moved
 
             // root routing
@@ -48,8 +57,17 @@ var AppRouter = function () {
             // Upload routing
             app.post('/api/upload', upload.array('files'), function (req, res, next) {
                 var files = req.files; // console.log('Received file uploaded', req.files); <-- Commented out
+
+                var fileModels = [];
+
+                _lodash2.default.each(files, function (fileObject) {
+                    // added 52.46
+                    var newFile = new _file2.default(app).initWithObject(fileObject).toJson();
+                    fileModels.push(newFile);
+                });
+
                 return res.json({
-                    files: files
+                    files: fileModels
                 });
             });
 

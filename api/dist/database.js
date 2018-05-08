@@ -10,8 +10,7 @@ var _mongodb = require('mongodb');
 // derived from the https://www.npmjs.com/package/mongodb
 var url = 'mongodb://localhost:27017/fileapp';
 
-// cb = Callback
-// connects to the mongodatabase 
+// connects to the mongodatabase // cb = Callback
 var connect = exports.connect = function connect(callback) {
 
     _mongodb.MongoClient.connect(url, function (err, db) {
